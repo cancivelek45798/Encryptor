@@ -1,6 +1,7 @@
+import binascii
 import tkinter
 import base64
-
+from tkinter import messagebox
 #functions
 def combine_and_encode(text, password):
     combined_text = text + password
@@ -17,26 +18,43 @@ def button_save_and_encrypt():
     title = entry_title.get()
     text = text_note.get("1.0", tkinter.END)
     masterkey = entry_masterkey.get()
+    if len(title) == 0 or len(text) == 0 or len(masterkey) == 0:
+        messagebox.showerror(title="Error!", message="Please enter all info.")
 
-    encoded_text = combine_and_encode(text, masterkey)
-
-    save_data(title, encoded_text)
+    else:
+        encoded_text = combine_and_encode(text, masterkey)
+        save_data(title, encoded_text)
 
 def button_decrypt():
     encoded_text = text_note.get("1.0", tkinter.END)
     masterkey = entry_masterkey.get()
 
-    decoded_text = decode_and_extract(encoded_text, masterkey)
-    change_text_content(decoded_text)
+    if len(encoded_text) == 0 or len(masterkey) == 0:
+        messagebox.showerror(title="Error!", message="Please enter all info.")
 
+    else:
+        try:
+            decoded_text = decode_and_extract(encoded_text, masterkey)
+            text_note.delete("1.0", tkinter.END)
+            text_note.insert("1.0", decoded_text)
+
+        except:
+            messagebox.showerror(title="Error!", message="Please enter encoded text.")
 def save_data(title, text):
-    with open('data.txt', 'a') as f:
-        data = f"{title}:\n{text}\n\n"
-        f.write(data)
+    try:
+        with open('data.txt', 'a') as f:
+            data = f"{title}:\n{text}\n\n"
+            f.write(data)
 
-def change_text_content(decoded_text):
-    text_note.delete("1.0", tkinter.END)
-    text_note.insert("1.0", decoded_text)
+    except FileNotFoundError:
+        with open('data.txt', 'a') as f:
+            data = f"{title}:\n{text}\n\n"
+            f.write(data)
+
+    finally:
+        entry_title.delete(0, tkinter.END)
+        text_note.delete("1.0", tkinter.END)
+        entry_masterkey.delete(0, tkinter.END)
 
 #window
 window = tkinter.Tk()
