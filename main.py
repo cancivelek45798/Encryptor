@@ -15,7 +15,7 @@ def decode_and_extract(encoded_data, password):
 
 def button_save_and_encrypt():
     title = entry_title.get()
-    text = text_note.get("1.0", tkinter.END) #Bir satırlık boşluk bırakıyor.
+    text = text_note.get("1.0", tkinter.END)
     masterkey = entry_masterkey.get()
 
     encoded_text = combine_and_encode(text, masterkey)
@@ -31,7 +31,7 @@ def button_decrypt():
 
 def save_data(title, text):
     with open('data.txt', 'a') as f:
-        data = f"{title}:\n{text}\n\n" #data en son buraya gelecek.
+        data = f"{title}:\n{text}\n\n"
         f.write(data)
 
 def change_text_content(decoded_text):
