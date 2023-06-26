@@ -4,14 +4,21 @@ import base64
 from tkinter import messagebox
 #functions
 def combine_and_encode(text, password):
-    combined_text = text + password
-    encoded_data = base64.b64encode(combined_text.encode('utf-8'))
-    return encoded_data.decode('utf-8')
+    enc = []
+    for i in range(len(text)):
+        key_c = password[i % len(password)]
+        enc_c = chr((ord(text[i]) + ord(key_c)) % 256)
+        enc.append(enc_c)
+    return base64.urlsafe_b64encode("".join(enc).encode()).decode()
 
 def decode_and_extract(encoded_data, password):
-    decoded_data = base64.b64decode(encoded_data.encode('utf-8'))
-    text = decoded_data[:-len(password)]
-    return text.decode('utf-8')
+    dec = []
+    encoded_data = base64.urlsafe_b64decode(encoded_data).decode()
+    for i in range(len(encoded_data)):
+        key_c = password[i % len(password)]
+        dec_c = chr((256 + ord(encoded_data[i]) - ord(key_c)) % 256)
+        dec.append(dec_c)
+    return "".join(dec)
 
 
 def button_save_and_encrypt():
